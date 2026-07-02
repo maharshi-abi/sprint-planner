@@ -19,8 +19,8 @@ class TimerController extends Controller
         $userId = $request->user()->id;
 
         return view('timer.index', [
-            'sprints' => $this->dashboard->sprintsForSelect($userId),
-            'categories' => $this->dashboard->categories(),
+            'sprints'       => $this->dashboard->activeSprintsForTimer($userId),
+            'categories'    => $this->dashboard->categories(),
             'activeSession' => $this->timer->activeSession($userId),
         ]);
     }
@@ -72,6 +72,31 @@ class TimerController extends Controller
         $this->timer->stop($workSession);
 
         return redirect()->route('dashboard.daily')->with('success', 'Work session completed.');
+    }
+
+    public function update(Request $request, WorkSession $workSession)
+    {
+        $this->authorizeSession($workSession, $request);
+
+        $validated = $request->validate([
+            'started_date'  => ['required', 'date'],
+            'started_time'  => ['required', 'date_format:H:i'],
+            'description'   => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $newStart = \Carbon\Carbon::parse($validated['started_date'] . ' ' . $validated['started_time']);
+
+        // Don't allow start time in the future
+        if ($newStart->isFuture()) {
+            return back()->withErrors(['started_date' => 'Start time cannot be in the future.']);
+        }
+
+        $workSession->update([
+            'started_at'  => $newStart,
+            'description' => $validated['description'] ?? $workSession->description,
+        ]);
+
+        return redirect()->route('timer.index')->with('success', 'Session updated successfully.');
     }
 
     public function status(Request $request)

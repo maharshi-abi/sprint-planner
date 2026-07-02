@@ -126,6 +126,14 @@ class DashboardService
         return Sprint::where('user_id', $userId)->orderByDesc('start_date')->get();
     }
 
+    public function activeSprintsForTimer(int $userId): Collection
+    {
+        return Sprint::where('user_id', $userId)
+            ->where('is_completed', false)
+            ->orderByDesc('start_date')
+            ->get();
+    }
+
     public function tasksForSprint(int $sprintId): Collection
     {
         return Task::where('sprint_id', $sprintId)->orderBy('title')->get();
@@ -133,7 +141,14 @@ class DashboardService
 
     public function tasksForPendingSprint(int $sprintId): Collection
     {
-        return Task::where('sprint_id', $sprintId)->where('status', '!=', 'completed')->orderBy('title')->get();
+        return Task::with('category')->where('sprint_id', $sprintId)->where('status', '!=', 'completed')->orderBy('title')->get()->map(function (Task $t) {
+            return [
+                'id'          => $t->id,
+                'title'       => $t->title,
+                'category_id' => $t->category_id,
+                'category'    => $t->category?->name,
+            ];
+        });
     }
 
 

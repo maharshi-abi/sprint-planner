@@ -19,10 +19,11 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/dashboard', fn () => redirect()->route('dashboard.daily'))->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'main'])->name('dashboard');
     Route::get('/dashboard/daily', [DashboardController::class, 'daily'])->name('dashboard.daily');
     Route::get('/dashboard/daily/stats', [DashboardController::class, 'dailyStats'])->name('dashboard.daily.stats');
     Route::get('/dashboard/sprint', [DashboardController::class, 'sprint'])->name('dashboard.sprint');
+    Route::get('/dashboard/main/stats', [DashboardController::class, 'mainStats'])->name('dashboard.main.stats');
 
     Route::resource('sprints', SprintController::class);
 
@@ -39,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/timer/{workSession}/pause', [TimerController::class, 'pause'])->name('timer.pause');
     Route::post('/timer/{workSession}/resume', [TimerController::class, 'resume'])->name('timer.resume');
     Route::post('/timer/{workSession}/stop', [TimerController::class, 'stop'])->name('timer.stop');
+    Route::patch('/timer/{workSession}/update', [TimerController::class, 'update'])->name('timer.update');
     Route::get('/timer/status', [TimerController::class, 'status'])->name('timer.status');
 
     Route::get('/work-sessions', [WorkSessionController::class, 'index'])->name('work-sessions.index');

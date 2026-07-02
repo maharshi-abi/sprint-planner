@@ -5,7 +5,14 @@
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold">Daily Dashboard</h1>
+    @if($activeTimer)
+    <a href="{{ route('timer.index') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors">
+        <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span></span>
+        Timer Running
+    </a>
+    @else
     <a href="{{ route('timer.index') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Start Timer</a>
+    @endif
 </div>
 
 <div class="grid md:grid-cols-4 gap-4 mb-8">
