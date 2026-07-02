@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Sprint Tracker') — {{ config('app.name') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
     @stack('styles')
@@ -14,16 +14,19 @@
         tailwind.config = { darkMode: 'class' }
     </script>
     <script>
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) || !('color-theme' in localStorage)) {
+        // Default to dark mode unless explicitly set to light
+        if (localStorage.getItem('color-theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
             document.documentElement.classList.add('dark');
             localStorage.setItem('color-theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark')
         }
     </script>
     <style type="text/tailwindcss">
         [x-cloak] { display: none !important; }
-        * { font-family: 'Inter', sans-serif; }
+        * { font-family: 'Outfit', sans-serif; }
+        body { @apply text-slate-900 dark:text-slate-50; }
+        h1, h2, h3, h4, h5, h6 { letter-spacing: -0.015em; font-weight: 600; }
         @layer base {
             .dark input:not([type="checkbox"]):not([type="radio"]),
             .dark select,
@@ -40,70 +43,82 @@
         ::-webkit-scrollbar-track { @apply bg-transparent; }
         ::-webkit-scrollbar-thumb { @apply bg-slate-300 dark:bg-slate-600/80 rounded-full border-2 border-solid border-transparent bg-clip-padding; }
         ::-webkit-scrollbar-thumb:hover { @apply bg-slate-400 dark:bg-slate-500 border-2 border-solid border-transparent bg-clip-padding; }
+        
+        /* Pro-level iOS Glass styles */
         .premium-card { @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl; }
+        .pro-panel { @apply rounded-3xl border shadow-sm transition-all duration-300 hover:shadow-md; }
+        
         .nav-link { @apply flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150; }
-        .nav-link-active { @apply bg-white/15 text-white; }
-        .nav-link-idle { @apply text-indigo-100 hover:bg-white/10 hover:text-white; }
+        .nav-link-active { @apply bg-slate-200/60 text-indigo-700 dark:bg-white/15 dark:text-white shadow-sm; }
+        .nav-link-idle { @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-indigo-100 dark:hover:bg-white/10 dark:hover:text-white; }
     </style>
     <style>
-        /* ── Dark-mode animated background ── */
-        .dark body { background: transparent !important; }
+        /* ── iOS Glass Animated background ── */
+        body { background: transparent !important; }
         #app-bg {
-            display: none;
             position: fixed;
             inset: 0;
             z-index: -1;
-            background: linear-gradient(135deg, #07060f, #0e0c1e, #0a1220, #060b14);
+            background: linear-gradient(135deg, #e4e7eb, #f2f5f9, #dfe5f0, #eaeef5);
             background-size: 400% 400%;
             animation: bgShift 30s ease infinite;
         }
-        .dark #app-bg { display: block; }
+        .dark #app-bg {
+            background: linear-gradient(135deg, #090a10, #131221, #0c1524, #080c16);
+        }
         @keyframes bgShift {
             0%   { background-position: 0% 50%; }
             50%  { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        /* Grid overlay */
+        
+        /* Grid overlay - faint in light mode, standard in dark */
         #app-grid {
-            display: none;
             position: fixed;
             inset: 0;
             z-index: -1;
             background-image:
-                linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+                linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
             background-size: 56px 56px;
             pointer-events: none;
         }
-        .dark #app-grid { display: block; }
+        .dark #app-grid {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        }
+
         /* Floating orbs */
         .app-orb {
-            display: none;
             position: fixed;
             border-radius: 50%;
             filter: blur(100px);
             pointer-events: none;
             z-index: -1;
         }
-        .dark .app-orb { display: block; }
         .app-orb-1 {
             width: 700px; height: 700px;
-            background: radial-gradient(circle, rgba(79,70,229,0.15), transparent 70%);
+            background: radial-gradient(circle, rgba(236,72,153,0.15), transparent 70%);
             top: -220px; left: -200px;
             animation: orbFloat1 20s ease-in-out infinite;
         }
         .app-orb-2 {
             width: 550px; height: 550px;
-            background: radial-gradient(circle, rgba(109,40,217,0.12), transparent 70%);
+            background: radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%);
             bottom: -180px; right: -150px;
             animation: orbFloat2 26s ease-in-out infinite;
         }
         .app-orb-3 {
             width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(6,182,212,0.07), transparent 70%);
+            background: radial-gradient(circle, rgba(139,92,246,0.15), transparent 70%);
             top: 40%; left: 55%;
             animation: orbFloat3 32s ease-in-out infinite;
         }
+        .dark .app-orb-1 { background: radial-gradient(circle, rgba(79,70,229,0.15), transparent 70%); }
+        .dark .app-orb-2 { background: radial-gradient(circle, rgba(109,40,217,0.12), transparent 70%); }
+        .dark .app-orb-3 { background: radial-gradient(circle, rgba(6,182,212,0.07), transparent 70%); }
+
         @keyframes orbFloat1 {
             0%,100% { transform: translate(0,0) scale(1); }
             33%      { transform: translate(40px,-30px) scale(1.05); }
@@ -118,27 +133,50 @@
             0%,100% { transform: translate(0,0); }
             50%      { transform: translate(-40px,-30px); }
         }
-        /* Auto glassmorphism for all white/slate-800 cards in dark mode */
+
+        /* ── iOS Glassmorphism - Light Mode ── */
+        .glass-card,
+        .bg-white,
+        .pro-panel {
+            background: rgba(255, 255, 255, 0.55) !important;
+            backdrop-filter: blur(24px) saturate(180%);
+            border-color: rgba(255, 255, 255, 0.6) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+            border-radius: 1.5rem; /* rounded-3xl equivalent */
+        }
+        #main-nav {
+            background: rgba(255, 255, 255, 0.65) !important;
+            backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        }
+        .nav-dropdown {
+            background: rgba(255, 255, 255, 0.75) !important;
+            backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            border-radius: 1rem;
+        }
+
+        /* ── iOS Glassmorphism - Dark Mode ── */
         .dark .glass-card,
         .dark .bg-white,
+        .dark .pro-panel,
         .dark .dark\:bg-slate-800 {
-            background: rgba(8,14,30,0.62) !important;
-            backdrop-filter: blur(18px) saturate(120%);
-            border-color: rgba(255,255,255,0.06) !important;
-            box-shadow: 0 4px 28px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+            background: rgba(8,14,30,0.45) !important;
+            backdrop-filter: blur(24px) saturate(120%);
+            border-color: rgba(255,255,255,0.08) !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06) !important;
         }
-        /* Nav glassmorphism in dark */
         .dark #main-nav {
-            background: rgba(15,23,42,0.70) !important;
-            backdrop-filter: blur(20px) saturate(150%);
-            border-bottom: 1px solid rgba(99,102,241,0.25) !important;
+            background: rgba(15,23,42,0.60) !important;
+            backdrop-filter: blur(24px) saturate(150%);
+            border-bottom: 1px solid rgba(255,255,255,0.05) !important;
             box-shadow: 0 1px 32px rgba(0,0,0,0.40);
         }
-        /* Dropdown glassmorphism in dark */
         .dark .nav-dropdown {
-            background: rgba(15,23,42,0.85) !important;
-            backdrop-filter: blur(20px);
-            border-color: rgba(255,255,255,0.08) !important;
+            background: rgba(15,23,42,0.65) !important;
+            backdrop-filter: blur(24px) saturate(150%);
+            border: 1px solid rgba(255,255,255,0.08) !important;
         }
         /* Table header rows in dark mode */
         .dark .dark\:bg-slate-900,
@@ -173,19 +211,19 @@
     <div class="app-orb app-orb-2" aria-hidden="true"></div>
     <div class="app-orb app-orb-3" aria-hidden="true"></div>
     @auth
-    <nav id="main-nav" class="bg-indigo-700 dark:bg-slate-800/90 backdrop-blur-xl sticky top-0 z-50 text-white shadow-md border-b border-indigo-600/50 dark:border-slate-700 transition-colors duration-300"
+    <nav id="main-nav" class="backdrop-blur-xl sticky top-0 z-50 text-slate-800 dark:text-white shadow-md border-b dark:border-slate-700 transition-colors duration-300"
          x-data="{ mobileMenuOpen: false, activeGroup: null }">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-14">
 
                 {{-- Brand --}}
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 font-bold text-base tracking-tight shrink-0">
-                    <div class="bg-white/20 rounded-lg p-1.5">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-indigo-100 dark:bg-white/20 rounded-lg p-1.5">
+                        <svg class="w-4 h-4 text-indigo-600 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-200 dark:from-white dark:to-slate-300">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-indigo-500 dark:from-white dark:to-slate-300">
                         {{ config('app.name') }}
                     </span>
                 </a>
@@ -203,7 +241,7 @@
                     </a>
 
                     {{-- Separator --}}
-                    <div class="w-px h-5 bg-white/20 mx-1"></div>
+                    <div class="w-px h-5 bg-slate-300 dark:bg-white/20 mx-1"></div>
 
                     {{-- Timer --}}
                     <a href="{{ route('timer.index') }}"
@@ -233,7 +271,7 @@
                     </a>
 
                     {{-- Separator --}}
-                    <div class="w-px h-5 bg-white/20 mx-1"></div>
+                    <div class="w-px h-5 bg-slate-300 dark:bg-white/20 mx-1"></div>
 
                     {{-- Analytics Dropdown --}}
                     <div x-data="{ open: false }" class="relative" @click.outside="open = false">
@@ -277,20 +315,20 @@
                 {{-- Right: theme + user --}}
                 <div class="hidden md:flex items-center gap-3">
                     <button type="button" id="theme-toggle"
-                        class="text-indigo-200 dark:text-slate-400 hover:text-white dark:hover:text-white p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors">
+                        class="text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-white p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-white/30 transition-colors">
                         <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                         <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                     </button>
-                    <div class="w-px h-5 bg-white/20"></div>
+                    <div class="w-px h-5 bg-slate-300 dark:bg-white/20"></div>
                     <form method="POST" action="{{ route('logout') }}" class="flex items-center gap-2.5">
                         @csrf
                         <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-indigo-500 dark:bg-slate-600 flex items-center justify-center text-white text-xs font-bold uppercase">
+                            <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 dark:bg-slate-600 flex items-center justify-center dark:text-white text-xs font-bold uppercase">
                                 {{ substr(auth()->user()->name, 0, 1) }}
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-white text-xs font-semibold leading-none">{{ auth()->user()->name }}</span>
-                                <button type="submit" class="text-[11px] text-indigo-200 hover:text-white dark:text-slate-400 dark:hover:text-slate-200 transition-colors mt-0.5 text-left">Sign out</button>
+                                <span class="text-slate-800 dark:text-white text-xs font-semibold leading-none">{{ auth()->user()->name }}</span>
+                                <button type="submit" class="text-[11px] text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-slate-200 transition-colors mt-0.5 text-left">Sign out</button>
                             </div>
                         </div>
                     </form>
@@ -298,7 +336,7 @@
 
                 {{-- Mobile hamburger --}}
                 <button @click="mobileMenuOpen = !mobileMenuOpen"
-                    class="md:hidden text-indigo-200 hover:text-white focus:outline-none p-2 rounded-lg">
+                    class="md:hidden text-slate-500 hover:text-indigo-600 dark:text-indigo-200 dark:hover:text-white focus:outline-none p-2 rounded-lg">
                     <svg x-show="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     <svg x-show="mobileMenuOpen" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -310,39 +348,39 @@
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
-             class="md:hidden bg-indigo-800 dark:bg-slate-800 border-t border-indigo-700 dark:border-slate-700 shadow-xl">
+             class="md:hidden bg-white/90 dark:bg-slate-800 backdrop-blur-xl border-t border-slate-200 dark:border-slate-700 shadow-xl">
             <div class="px-4 pt-3 pb-4 space-y-1">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-white/15 text-white' : 'text-indigo-100 hover:bg-white/10' }}">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-slate-100 text-indigo-700 dark:bg-white/15 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:text-indigo-100 dark:hover:bg-white/10' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                     Dashboard
                 </a>
-                <a href="{{ route('timer.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('timer.*') ? 'bg-white/15 text-white' : 'text-indigo-100 hover:bg-white/10' }}">
+                <a href="{{ route('timer.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('timer.*') ? 'bg-slate-100 text-indigo-700 dark:bg-white/15 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:text-indigo-100 dark:hover:bg-white/10' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Timer
                 </a>
-                <a href="{{ route('sprints.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('sprints.*') ? 'bg-white/15 text-white' : 'text-indigo-100 hover:bg-white/10' }}">
+                <a href="{{ route('sprints.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('sprints.*') ? 'bg-slate-100 text-indigo-700 dark:bg-white/15 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:text-indigo-100 dark:hover:bg-white/10' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     Sprints
                 </a>
-                <a href="{{ route('work-sessions.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('work-sessions.*') ? 'bg-white/15 text-white' : 'text-indigo-100 hover:bg-white/10' }}">
+                <a href="{{ route('work-sessions.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('work-sessions.*') ? 'bg-slate-100 text-indigo-700 dark:bg-white/15 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:text-indigo-100 dark:hover:bg-white/10' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                     Work Logs
                 </a>
-                <div class="border-t border-indigo-700 dark:border-slate-700 pt-2 mt-2">
-                    <p class="px-3 text-[10px] font-bold text-indigo-300 dark:text-slate-500 uppercase tracking-widest mb-1">Analytics</p>
-                    <a href="{{ route('dashboard.daily') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard.daily') ? 'bg-white/15 text-white' : 'text-indigo-100 hover:bg-white/10' }}">Daily Overview</a>
-                    <a href="{{ route('dashboard.sprint') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard.sprint') ? 'bg-white/15 text-white' : 'text-indigo-100 hover:bg-white/10' }}">Sprint Progress</a>
-                    <a href="{{ route('reports.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('reports.index') ? 'bg-white/15 text-white' : 'text-indigo-100 hover:bg-white/10' }}">Weekly Report</a>
-                    <a href="{{ route('reports.monthly') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('reports.monthly') ? 'bg-white/15 text-white' : 'text-indigo-100 hover:bg-white/10' }}">Monthly Analytics</a>
+                <div class="border-t border-slate-200 dark:border-slate-700 pt-2 mt-2">
+                    <p class="px-3 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Analytics</p>
+                    <a href="{{ route('dashboard.daily') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard.daily') ? 'bg-slate-100 text-indigo-700 dark:bg-white/15 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:text-indigo-100 dark:hover:bg-white/10' }}">Daily Overview</a>
+                    <a href="{{ route('dashboard.sprint') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard.sprint') ? 'bg-slate-100 text-indigo-700 dark:bg-white/15 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:text-indigo-100 dark:hover:bg-white/10' }}">Sprint Progress</a>
+                    <a href="{{ route('reports.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('reports.index') ? 'bg-slate-100 text-indigo-700 dark:bg-white/15 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:text-indigo-100 dark:hover:bg-white/10' }}">Weekly Report</a>
+                    <a href="{{ route('reports.monthly') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('reports.monthly') ? 'bg-slate-100 text-indigo-700 dark:bg-white/15 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:text-indigo-100 dark:hover:bg-white/10' }}">Monthly Analytics</a>
                 </div>
-                <div class="border-t border-indigo-700 dark:border-slate-700 pt-3 mt-2 flex items-center justify-between px-3">
+                <div class="border-t border-slate-200 dark:border-slate-700 pt-3 mt-2 flex items-center justify-between px-3">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-full bg-indigo-500 dark:bg-slate-600 flex items-center justify-center text-white text-xs font-bold uppercase">{{ substr(auth()->user()->name, 0, 1) }}</div>
-                        <span class="text-white text-sm font-medium">{{ auth()->user()->name }}</span>
+                        <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 dark:bg-slate-600 flex items-center justify-center dark:text-white text-xs font-bold uppercase">{{ substr(auth()->user()->name, 0, 1) }}</div>
+                        <span class="text-slate-800 dark:text-white text-sm font-medium">{{ auth()->user()->name }}</span>
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-indigo-200 hover:text-white text-sm font-medium">Sign out</button>
+                        <button type="submit" class="text-slate-500 hover:text-indigo-600 dark:text-indigo-200 dark:hover:text-white text-sm font-medium">Sign out</button>
                     </form>
                 </div>
             </div>
@@ -369,10 +407,10 @@
     <script>
         var themeToggleDarkIcon  = document.getElementById('theme-toggle-dark-icon');
         var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            themeToggleLightIcon?.classList.remove('hidden');
-        } else {
+        if (localStorage.getItem('color-theme') === 'light') {
             themeToggleDarkIcon?.classList.remove('hidden');
+        } else {
+            themeToggleLightIcon?.classList.remove('hidden');
         }
         var themeToggleBtn = document.getElementById('theme-toggle');
         themeToggleBtn?.addEventListener('click', function() {

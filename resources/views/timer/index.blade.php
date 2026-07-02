@@ -9,7 +9,7 @@
 </div>
 
 @if($activeSession)
-<div class="bg-indigo-50 dark:bg-slate-800 border-2 border-indigo-200 dark:border-slate-700 rounded-2xl p-6 mb-6 shadow-sm">
+<div class="pro-panel bg-indigo-50/50 dark:bg-slate-800 p-6 mb-6">
     <div class="flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
         <div class="flex-1 text-center md:text-left">
             <p class="text-sm text-indigo-600 dark:text-indigo-400 font-medium uppercase tracking-wide">Active Session</p>
@@ -103,7 +103,7 @@
     @endif
 </div>
 @else
-<div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm max-w-2xl">
+<div class="pro-panel p-6 max-w-2xl">
     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Workflow: Select Sprint → Task → (Category auto-fills) → Description → Start Timer</p>
     <form method="POST" action="{{ route('timer.start') }}" class="space-y-4" id="timerForm">
         @csrf

@@ -11,13 +11,30 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Class ReportController
+ *
+ * Handles HTTP requests for viewing, generating, and downloading reports.
+ */
 class ReportController extends Controller
 {
+    /**
+     * ReportController constructor.
+     *
+     * @param ReportService $reports Handles report generation logic.
+     * @param DashboardService $dashboard Handles dashboard data retrieval.
+     */
     public function __construct(
         protected ReportService $reports,
         protected DashboardService $dashboard,
     ) {}
 
+    /**
+     * Displays the weekly report generation interface and history.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function index(Request $request)
     {
         $sprints = $this->dashboard->sprintsForSelect($request->user()->id);
@@ -29,75 +46,55 @@ class ReportController extends Controller
         return view('reports.index', compact('sprints', 'generated'));
     }
 
+    /**
+     * Displays the monthly analytics dashboard.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function monthly(Request $request)
     {
-        $data = $this->getMonthlyReportData($request);
-        return view('reports.monthly', $data);
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+
+        $data = $this->reports->getMonthlyReportData($request->user()->id, $start, $end);
+        
+        return view('reports.monthly', array_merge(compact('startDate', 'endDate'), $data));
     }
 
+    /**
+     * Generates and downloads the monthly analytics report as a PDF.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function monthlyPdf(Request $request)
     {
-        $data = $this->getMonthlyReportData($request);
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+
+        $data = $this->reports->getMonthlyReportData($request->user()->id, $start, $end);
+        $data['startDate'] = $startDate;
+        $data['endDate'] = $endDate;
 
         // Required by dompdf
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.monthly_pdf', $data);
 
-        return $pdf->download("monthly_report_{$data['startDate']}_{$data['endDate']}.pdf");
+        return $pdf->download("monthly_report_{$startDate}_{$endDate}.pdf");
     }
 
-    private function getMonthlyReportData(Request $request): array
-    {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
-
-        $start = Carbon::parse($startDate)->startOfDay();
-        $end = Carbon::parse($endDate)->endOfDay();
-
-        $workSessions = WorkSession::with(['task', 'category', 'sprint'])
-            ->where('user_id', $request->user()->id)
-            ->whereBetween('started_at', [$start, $end])
-            ->get();
-
-        $taskStats = [];
-        $dailyStats = [];
-
-        foreach ($workSessions as $session) {
-            $taskName = $session->task ? $session->task->title : 'Unassigned Task';
-            if (!isset($taskStats[$taskName])) {
-                $taskStats[$taskName] = 0;
-            }
-            $taskStats[$taskName] += $session->workedHours();
-
-            $dateKey = $session->started_at->format('Y-m-d');
-            if (!isset($dailyStats[$dateKey])) {
-                $dailyStats[$dateKey] = 0;
-            }
-            $dailyStats[$dateKey] += $session->workedHours();
-        }
-
-        ksort($dailyStats);
-
-        $completedTasks = \App\Models\Task::whereHas('sprint', function ($q) use ($request) {
-                $q->where('user_id', $request->user()->id);
-            })
-            ->where('status', 'completed')
-            ->whereBetween('updated_at', [$start, $end])
-            ->get();
-
-        $dailyPoints = [];
-        foreach ($completedTasks as $task) {
-            $dateKey = $task->updated_at->format('Y-m-d');
-            if (!isset($dailyPoints[$dateKey])) {
-                $dailyPoints[$dateKey] = 0;
-            }
-            $dailyPoints[$dateKey] += $task->estimated_hours ?? 1;
-        }
-        ksort($dailyPoints);
-
-        return compact('startDate', 'endDate', 'taskStats', 'dailyStats', 'dailyPoints', 'workSessions');
-    }
-
-
+    /**
+     * Previews a weekly report before generation.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function preview(Request $request)
     {
         $validated = $request->validate([
@@ -110,6 +107,12 @@ class ReportController extends Controller
         return view('reports.preview', compact('data', 'sprint'));
     }
 
+    /**
+     * Generates and stores a weekly report for a specific sprint.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function generate(Request $request)
     {
         $validated = $request->validate([
@@ -122,6 +125,13 @@ class ReportController extends Controller
         return redirect()->route('reports.show', $report)->with('success', 'Weekly report generated.');
     }
 
+    /**
+     * Displays a generated weekly report.
+     *
+     * @param WeeklyReport $weeklyReport
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function show(WeeklyReport $weeklyReport, Request $request)
     {
         abort_unless($weeklyReport->user_id === $request->user()->id, 403);
@@ -132,6 +142,14 @@ class ReportController extends Controller
         ]);
     }
 
+    /**
+     * Downloads a generated weekly report in the specified format.
+     *
+     * @param WeeklyReport $weeklyReport
+     * @param Request $request
+     * @param string $format The format to download (pdf, excel, csv).
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
     public function download(WeeklyReport $weeklyReport, Request $request, string $format)
     {
         abort_unless($weeklyReport->user_id === $request->user()->id, 403);

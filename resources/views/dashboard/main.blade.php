@@ -35,7 +35,7 @@
 
 {{-- KPI Cards --}}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm premium-card">
+    <div class="pro-panel p-5 premium-card">
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Today's Hours</p>
@@ -47,7 +47,7 @@
         </div>
         <p class="text-xs text-slate-400 dark:text-slate-500 mt-3">This Month: <span class="font-semibold text-slate-600 dark:text-slate-300">{{ $monthHours }}h</span></p>
     </div>
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm premium-card">
+    <div class="pro-panel p-5 premium-card">
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Tasks Done</p>
@@ -59,7 +59,7 @@
         </div>
         <p class="text-xs text-slate-400 dark:text-slate-500 mt-3">In Progress: <span class="font-semibold text-amber-600 dark:text-amber-400">{{ $inProgressTasks }}</span></p>
     </div>
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm premium-card">
+    <div class="pro-panel p-5 premium-card">
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Active Sprints</p>
@@ -71,7 +71,7 @@
         </div>
         <p class="text-xs text-slate-400 dark:text-slate-500 mt-3">Pending Tasks: <span class="font-semibold text-slate-600 dark:text-slate-300">{{ $pendingTasks }}</span></p>
     </div>
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm premium-card">
+    <div class="pro-panel p-5 premium-card">
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Hours</p>
@@ -87,13 +87,13 @@
 
 {{-- Charts row --}}
 <div class="grid lg:grid-cols-3 gap-6 mb-6">
-    <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+    <div class="lg:col-span-2 pro-panel p-5">
         <h2 class="font-semibold text-slate-800 dark:text-slate-200 mb-4">Last 7 Days — Hours Worked</h2>
         <div style="height: 220px;">
             <canvas id="weeklyChart"></canvas>
         </div>
     </div>
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+    <div class="pro-panel p-5">
         <h2 class="font-semibold text-slate-800 dark:text-slate-200 mb-4">Category Breakdown</h2>
         <div style="height: 220px;" class="flex items-center justify-center">
             @if($categoryBreakdown->isNotEmpty())
@@ -108,7 +108,7 @@
 {{-- Sprint progress + Quick links --}}
 <div class="grid lg:grid-cols-3 gap-6 mb-6">
     {{-- Active Sprints --}}
-    <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+    <div class="lg:col-span-2 pro-panel overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
             <h2 class="font-semibold text-slate-800 dark:text-slate-200">Active Sprints Progress</h2>
             <a href="{{ route('sprints.index') }}" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">View all →</a>
@@ -132,7 +132,7 @@
     </div>
 
     {{-- Quick Links --}}
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
+    <div class="pro-panel p-5">
         <h2 class="font-semibold text-slate-800 dark:text-slate-200 mb-4">Quick Links</h2>
         <div class="grid grid-cols-2 gap-3">
             @php
@@ -164,7 +164,7 @@
 </div>
 
 {{-- Recent Sessions --}}
-<div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+<div class="pro-panel overflow-hidden">
     <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
         <h2 class="font-semibold text-slate-800 dark:text-slate-200">Recent Work Sessions</h2>
         <a href="{{ route('work-sessions.index') }}" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">View all →</a>

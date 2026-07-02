@@ -7,13 +7,31 @@ use App\Services\DashboardService;
 use App\Services\TimerService;
 use Illuminate\Http\Request;
 
+/**
+ * Class TimerController
+ *
+ * Manages the timer interface, including starting, pausing, resuming,
+ * and completing work sessions.
+ */
 class TimerController extends Controller
 {
+    /**
+     * TimerController constructor.
+     *
+     * @param TimerService $timer Handles the core timer state transitions.
+     * @param DashboardService $dashboard Handles data retrieval for the timer UI.
+     */
     public function __construct(
         protected TimerService $timer,
         protected DashboardService $dashboard,
     ) {}
 
+    /**
+     * Displays the main timer interface.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function index(Request $request)
     {
         $userId = $request->user()->id;
@@ -25,6 +43,12 @@ class TimerController extends Controller
         ]);
     }
 
+    /**
+     * Retrieves tasks for a specific sprint (used via AJAX).
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function tasks(Request $request)
     {
         $request->validate(['sprint_id' => ['required', 'exists:sprints,id']]);
@@ -34,6 +58,12 @@ class TimerController extends Controller
         );
     }
 
+    /**
+     * Starts a new work session.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function start(Request $request)
     {
         $validated = $request->validate([
@@ -48,6 +78,13 @@ class TimerController extends Controller
         return redirect()->route('timer.index')->with('success', 'Timer started.');
     }
 
+    /**
+     * Pauses an active work session.
+     *
+     * @param Request $request
+     * @param WorkSession $workSession
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function pause(Request $request, WorkSession $workSession)
     {
         $this->authorizeSession($workSession, $request);
@@ -58,6 +95,13 @@ class TimerController extends Controller
         return redirect()->route('timer.index')->with('success', 'Timer paused (interruption logged).');
     }
 
+    /**
+     * Resumes a paused work session.
+     *
+     * @param Request $request
+     * @param WorkSession $workSession
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function resume(Request $request, WorkSession $workSession)
     {
         $this->authorizeSession($workSession, $request);
@@ -66,6 +110,13 @@ class TimerController extends Controller
         return redirect()->route('timer.index')->with('success', 'Timer resumed.');
     }
 
+    /**
+     * Completes and stops a work session.
+     *
+     * @param Request $request
+     * @param WorkSession $workSession
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function stop(Request $request, WorkSession $workSession)
     {
         $this->authorizeSession($workSession, $request);
@@ -74,6 +125,13 @@ class TimerController extends Controller
         return redirect()->route('dashboard.daily')->with('success', 'Work session completed.');
     }
 
+    /**
+     * Updates an active work session's start time or description.
+     *
+     * @param Request $request
+     * @param WorkSession $workSession
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, WorkSession $workSession)
     {
         $this->authorizeSession($workSession, $request);
@@ -99,6 +157,12 @@ class TimerController extends Controller
         return redirect()->route('timer.index')->with('success', 'Session updated successfully.');
     }
 
+    /**
+     * Retrieves the current timer status (used via AJAX for live updates).
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function status(Request $request)
     {
         $session = $this->timer->activeSession($request->user()->id);
@@ -117,6 +181,12 @@ class TimerController extends Controller
         ]);
     }
 
+    /**
+     * Ensures the authenticated user owns the work session.
+     *
+     * @param WorkSession $session
+     * @param Request $request
+     */
     protected function authorizeSession(WorkSession $session, Request $request): void
     {
         abort_unless($session->user_id === $request->user()->id, 403);
