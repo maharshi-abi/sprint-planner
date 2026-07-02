@@ -53,9 +53,9 @@
             position: fixed;
             inset: 0;
             z-index: -1;
-            background: linear-gradient(135deg, #0f0c29, #1e1b4b, #1a2a4a, #0f172a);
+            background: linear-gradient(135deg, #07060f, #0e0c1e, #0a1220, #060b14);
             background-size: 400% 400%;
-            animation: bgShift 18s ease infinite;
+            animation: bgShift 30s ease infinite;
         }
         .dark #app-bg { display: block; }
         @keyframes bgShift {
@@ -70,9 +70,9 @@
             inset: 0;
             z-index: -1;
             background-image:
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 48px 48px;
+                linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+            background-size: 56px 56px;
             pointer-events: none;
         }
         .dark #app-grid { display: block; }
@@ -87,22 +87,22 @@
         }
         .dark .app-orb { display: block; }
         .app-orb-1 {
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(99,102,241,0.35), transparent 70%);
-            top: -180px; left: -160px;
-            animation: orbFloat1 14s ease-in-out infinite;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(79,70,229,0.15), transparent 70%);
+            top: -220px; left: -200px;
+            animation: orbFloat1 20s ease-in-out infinite;
         }
         .app-orb-2 {
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(139,92,246,0.28), transparent 70%);
-            bottom: -150px; right: -120px;
-            animation: orbFloat2 18s ease-in-out infinite;
+            width: 550px; height: 550px;
+            background: radial-gradient(circle, rgba(109,40,217,0.12), transparent 70%);
+            bottom: -180px; right: -150px;
+            animation: orbFloat2 26s ease-in-out infinite;
         }
         .app-orb-3 {
-            width: 350px; height: 350px;
-            background: radial-gradient(circle, rgba(6,182,212,0.18), transparent 70%);
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(6,182,212,0.07), transparent 70%);
             top: 40%; left: 55%;
-            animation: orbFloat3 22s ease-in-out infinite;
+            animation: orbFloat3 32s ease-in-out infinite;
         }
         @keyframes orbFloat1 {
             0%,100% { transform: translate(0,0) scale(1); }
@@ -122,10 +122,10 @@
         .dark .glass-card,
         .dark .bg-white,
         .dark .dark\:bg-slate-800 {
-            background: rgba(15,23,42,0.55) !important;
-            backdrop-filter: blur(16px) saturate(140%);
-            border-color: rgba(255,255,255,0.07) !important;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+            background: rgba(8,14,30,0.62) !important;
+            backdrop-filter: blur(18px) saturate(120%);
+            border-color: rgba(255,255,255,0.06) !important;
+            box-shadow: 0 4px 28px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.04) !important;
         }
         /* Nav glassmorphism in dark */
         .dark #main-nav {

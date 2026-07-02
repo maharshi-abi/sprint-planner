@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/monthly', [ReportController::class, 'monthly'])->name('reports.monthly');
+    Route::get('/reports/monthly/pdf', [ReportController::class, 'monthlyPdf'])->name('reports.monthly.pdf');
     Route::get('/reports/preview', [ReportController::class, 'preview'])->name('reports.preview');
     Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
     Route::get('/reports/{weeklyReport}', [ReportController::class, 'show'])->name('reports.show');

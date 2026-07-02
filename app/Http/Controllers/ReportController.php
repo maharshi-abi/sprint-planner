@@ -31,13 +31,29 @@ class ReportController extends Controller
 
     public function monthly(Request $request)
     {
+        $data = $this->getMonthlyReportData($request);
+        return view('reports.monthly', $data);
+    }
+
+    public function monthlyPdf(Request $request)
+    {
+        $data = $this->getMonthlyReportData($request);
+
+        // Required by dompdf
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.monthly_pdf', $data);
+
+        return $pdf->download("monthly_report_{$data['startDate']}_{$data['endDate']}.pdf");
+    }
+
+    private function getMonthlyReportData(Request $request): array
+    {
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
 
         $start = Carbon::parse($startDate)->startOfDay();
         $end = Carbon::parse($endDate)->endOfDay();
 
-        $workSessions = WorkSession::with('task')
+        $workSessions = WorkSession::with(['task', 'category', 'sprint'])
             ->where('user_id', $request->user()->id)
             ->whereBetween('started_at', [$start, $end])
             ->get();
@@ -61,7 +77,6 @@ class ReportController extends Controller
 
         ksort($dailyStats);
 
-        // Fetch tasks completed in this timeframe to calculate 'points' (estimated hours) completed day by day
         $completedTasks = \App\Models\Task::whereHas('sprint', function ($q) use ($request) {
                 $q->where('user_id', $request->user()->id);
             })
@@ -75,11 +90,11 @@ class ReportController extends Controller
             if (!isset($dailyPoints[$dateKey])) {
                 $dailyPoints[$dateKey] = 0;
             }
-            $dailyPoints[$dateKey] += $task->estimated_hours ?? 1; // Default to 1 point if estimated_hours is null
+            $dailyPoints[$dateKey] += $task->estimated_hours ?? 1;
         }
         ksort($dailyPoints);
 
-        return view('reports.monthly', compact('startDate', 'endDate', 'taskStats', 'dailyStats', 'dailyPoints'));
+        return compact('startDate', 'endDate', 'taskStats', 'dailyStats', 'dailyPoints', 'workSessions');
     }
 
 

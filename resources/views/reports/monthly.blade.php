@@ -25,10 +25,16 @@
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">End Date</label>
             <input type="date" name="end_date" value="{{ $endDate }}" class="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm w-44 focus:ring-2 focus:ring-indigo-500">
         </div>
-        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0014 13.586V19a1 1 0 01-.553.894l-4 2A1 1 0 018 21v-7.414a1 1 0 00-.293-.707L1.293 6.707A1 1 0 011 6V4z"/></svg>
-            Apply Filter
-        </button>
+        <div class="flex items-center gap-3">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0014 13.586V19a1 1 0 01-.553.894l-4 2A1 1 0 018 21v-7.414a1 1 0 00-.293-.707L1.293 6.707A1 1 0 011 6V4z"/></svg>
+                Apply Filter
+            </button>
+            <a href="{{ route('reports.monthly.pdf', request()->all()) }}" class="bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 px-5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Export PDF
+            </a>
+        </div>
     </form>
 </div>
 
